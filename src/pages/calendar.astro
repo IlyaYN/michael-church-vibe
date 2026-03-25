@@ -1,0 +1,28 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+---
+
+<Layout title="Православный календарь">
+  <Header />
+  
+  <main class="pt-32 pb-20 px-4 max-w-6xl mx-auto min-h-screen relative z-10">
+    <div class="text-center mb-12 animate-[fadeIn_0.5s_ease-out]">
+      <h1 class="text-5xl md:text-6xl font-bold font-['Playfair_Display'] text-slate-900 mb-6 text-balance text-center">Церковный календарь</h1>
+      <div class="w-24 h-1 bg-amber-700 mx-auto rounded-full opacity-80 mb-6 shadow-inner"></div>
+      <p class="text-lg text-slate-600 max-w-2xl mx-auto">
+        Церковные праздники, дни памяти святых и чтения Священного Писания на каждый день.
+      </p>
+    </div>
+
+    <div class="bg-white/90 backdrop-blur-md rounded-[3rem] shadow-2xl border border-slate-100 p-4 md:p-8 w-full min-h-[800px] relative overflow-hidden flex flex-col items-center">
+      
+      <iframe 
+        src="https://azbyka.ru/days" 
+        class="w-full h-[800px] rounded-2xl border-0" 
+        title="Православный календарь Азбука Веры">
+      </iframe>
+
+    </div>
+  </main>
+</Layout>

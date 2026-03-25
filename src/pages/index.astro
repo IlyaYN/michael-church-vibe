@@ -1,0 +1,121 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+
+// НАСТРОЙКИ АДМИНКИ (Берем ID Админки из сейфа .env)
+const SHEET_ID = import.meta.env.GOOGLE_SHEET_ADMIN_ID;
+const TAB_NAME = 'Home'; // Вкладка Home
+const URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${TAB_NAME}`;
+
+// Стандартные тексты (сработают, если таблица пустая)
+let content = {
+  hero: 'Свет, мир и благодать в микрорайоне Заветы Ильича',
+  about: 'Место тихой молитвы и духовного утешения для жителей микрорайона Заветы Ильича. Храм имеет богатую историю, объединяя поколения верующих. Приход активно занимается социальной помощью и ведет занятия в Воскресной школе.',
+  news: 'Следите за анонсами праздничных богослужений, просветительскими статьями и событиями из жизни нашей общины.'
+};
+
+try {
+  const response = await fetch(URL);
+  const text = await response.text();
+  const jsonString = text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1);
+  const data = JSON.parse(jsonString);
+  
+  // Умная подмена текстов из Колонки B
+  data.table.rows.forEach(row => {
+    const c = row.c;
+    if (!c || !c[0]) return;
+    
+    const blockId = c[0].v; // Берем метку из колонки A (hero, about, news)
+    
+    if (content[blockId] !== undefined) {
+      content[blockId] = c[1]?.v || content[blockId]; // Берем текст из колонки B
+    }
+  });
+} catch (error) {
+  console.error('Ошибка при загрузке текстов Главной страницы:', error);
+}
+---
+
+<Layout title="Главная">
+  <Header />
+  
+  <main class="relative z-10">
+    
+    <div class="pt-32 pb-20 px-4 max-w-7xl mx-auto mt-4 relative z-10">
+      <div class="bg-slate-900 rounded-[3rem] p-10 md:p-20 xl:p-24 text-center shadow-2xl relative overflow-hidden flex flex-col items-center justify-center min-h-[75vh] pb-24 md:pb-20">
+        
+        <div class="absolute inset-0 z-0 opacity-45 mix-blend-screen pointer-events-none">
+          <img src="/images/sketch-main.jpg" alt="Фоновый рисунок" class="w-full h-full object-cover">
+        </div>
+        
+        <div class="absolute inset-0 z-0 bg-gradient-to-t from-slate-900/80 to-transparent pointer-events-none"></div>
+
+        <div class="relative z-20 animate-[fadeIn_1s_ease-out] w-full max-w-6xl mx-auto">
+          
+          <h1 class="text-[clamp(2.4rem,10vw,5rem)] sm:text-6xl md:text-7xl font-bold font-['Playfair_Display'] text-white mb-8 leading-[1.1] drop-shadow-lg text-center w-full max-w-none mx-auto">
+            Храм Архангела<br class="block sm:hidden" /> Михаила
+          </h1>
+          
+          <p class="text-xl md:text-2xl text-slate-300 max-w-3xl mx-auto mb-16 font-medium leading-relaxed whitespace-pre-line">
+            {content.hero}
+          </p>
+          
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 xl:gap-6 w-full max-w-4xl mx-auto relative z-10">
+            <a href="/schedule" class="w-full px-8 py-5 bg-white text-slate-950 rounded-full font-bold text-lg hover:bg-slate-50 hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 shadow-xl active:scale-95 text-center flex items-center justify-center">
+              Расписание богослужений
+            </a>
+            <a href="/calendar" class="w-full px-8 py-5 bg-white text-slate-950 rounded-full font-bold text-lg hover:bg-slate-50 hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 shadow-xl active:scale-95 text-center flex items-center justify-center">
+              Православный календарь
+            </a>
+            <a href="/notes" class="w-full px-8 py-5 bg-white/10 text-white border border-white/20 backdrop-blur-md rounded-full font-bold text-lg hover:bg-white/20 hover:-translate-y-1 transition-all duration-300 active:scale-95 text-center flex items-center justify-center">
+              Подать записки
+            </a>
+            <a href="/donate" class="w-full px-8 py-5 bg-amber-700 text-white rounded-full font-bold text-lg hover:bg-amber-800 hover:-translate-y-1 hover:shadow-2xl hover:shadow-amber-900/60 transition-all duration-300 shadow-xl shadow-amber-900/50 active:scale-95 text-center flex items-center justify-center">
+              Помощь храму
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 pb-32">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-4 relative z-10">
+        
+        <div class="bg-white rounded-[3rem] p-10 md:p-14 shadow-xl border border-slate-100 flex flex-col justify-between relative overflow-hidden group hover:shadow-amber-800/10 transition-shadow duration-500 hover:border-amber-100/50">
+          <div class="relative z-10">
+            <h2 class="text-4xl font-bold font-['Playfair_Display'] text-slate-900 mb-6 group-hover:text-amber-900 transition-colors">О храме</h2>
+            
+            <p class="text-slate-600 text-lg mb-8 leading-relaxed whitespace-pre-line">
+              {content.about}
+            </p>
+            
+            <a href="/about" class="inline-flex items-center px-6 py-3 border-2 border-amber-200 text-amber-900 rounded-full font-bold hover:bg-amber-50 hover:border-amber-400 transition-all active:scale-95 shadow-sm">
+              Подробнее о храме
+            </a>
+          </div>
+          <div class="absolute bottom-[-20px] right-[-20px] w-64 h-64 opacity-25 mix-blend-multiply transition-transform duration-700 group-hover:scale-105 group-hover:opacity-30 pointer-events-none">
+             <img src="/images/sketch-4.jpg" alt="Вид храма" class="w-full h-full object-contain">
+          </div>
+        </div>
+
+        <div class="bg-amber-50/50 rounded-[3rem] p-10 md:p-14 shadow-xl border border-amber-100/50 flex flex-col justify-between relative overflow-hidden group hover:shadow-amber-800/10 transition-shadow duration-500 hover:border-amber-100">
+          <div class="relative z-10">
+            <h2 class="text-4xl font-bold font-['Playfair_Display'] text-slate-900 mb-6 group-hover:text-amber-900 transition-colors">Новости и публикации</h2>
+            
+            <p class="text-slate-700 text-lg mb-8 leading-relaxed whitespace-pre-line">
+              {content.news}
+            </p>
+            
+            <a href="/news" class="inline-flex items-center px-6 py-3 bg-amber-800 text-white rounded-full font-bold hover:bg-amber-900 transition-all active:scale-95 shadow-md shadow-amber-800/20">
+              Смотреть подробнее →
+            </a>
+          </div>
+          <div class="absolute top-[20px] right-[-30px] w-56 h-56 opacity-15 mix-blend-multiply rotate-[10deg] transition-transform duration-700 group-hover:rotate-0 pointer-events-none">
+             <img src="/images/sketch-1.jpg" alt="Элемент храма" class="w-full h-full object-contain">
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+</Layout>

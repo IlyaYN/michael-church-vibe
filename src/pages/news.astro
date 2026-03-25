@@ -1,0 +1,49 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+---
+
+<Layout title="Новости и публикации">
+  <Header />
+  
+  <main class="pt-32 pb-20 px-4 max-w-4xl mx-auto min-h-screen relative z-10">
+    <div class="text-center mb-12 animate-[fadeIn_0.5s_ease-out]">
+      <h1 class="text-5xl md:text-6xl font-bold font-['Playfair_Display'] text-slate-950 mb-6 text-balance text-center">Новости и публикации нашего прихода</h1>
+      <div class="w-24 h-1 bg-amber-700 mx-auto rounded-full opacity-80 mb-6 shadow-inner"></div>
+      
+      <p class="text-lg text-slate-600 max-w-2xl mx-auto">
+        Следите за жизнью нашего храма, анонсами богослужений, а также читайте полезный просветительский контент и важные публикации.
+      </p>
+    </div>
+
+    <div class="bg-white rounded-[2rem] p-4 sm:p-6 md:p-10 shadow-2xl border border-amber-100/50 min-h-[800px] flex justify-center relative overflow-hidden group hover:shadow-amber-800/10 transition-shadow duration-500">
+      
+      <div class="absolute top-0 right-0 w-64 h-64 opacity-5 mix-blend-multiply pointer-events-none">
+          <img src="/images/sketch-1.png" alt="" class="w-full h-full object-cover">
+      </div>
+
+      <div class="w-full relative z-10 flex justify-center">
+        <div id="vk_groups" class="w-full max-w-[800px]"></div>
+      </div>
+      
+    </div>
+  </main>
+</Layout>
+
+<script is:inline src="https://vk.com/js/api/openapi.js?169"></script>
+
+<script is:inline>
+  document.addEventListener("DOMContentLoaded", () => {
+    if (window.VK) {
+      VK.Widgets.Group("vk_groups", {
+        mode: 4,           // Режим "Стена" (показывает посты)
+        wide: 1,           // Разрешить тянуться по ширине
+        width: "auto",     // Занимать 100% доступной ширины
+        height: "800",     // Высота ленты в пикселях (появится внутренний скролл)
+        color1: "FFFFFF",  // Цвет фона (Белый)
+        color2: "1E293B",  // Цвет текста (Наш фирменный slate-800)
+        color3: "92400E"   // Цвет кнопок, иконок и ссылок (Наш янтарный amber-800)
+      }, 206931692);       // ID вашей группы
+    }
+  });
+</script>

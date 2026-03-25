@@ -1,0 +1,202 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+
+// Берем ключи на сервере
+const botToken = import.meta.env.PUBLIC_TG_BOT_TOKEN;
+const zdravieChatId = import.meta.env.PUBLIC_TG_ZDRAVIE_CHAT_ID;
+const upokoenieChatId = import.meta.env.PUBLIC_TG_UPOKOENIE_CHAT_ID;
+---
+
+<Layout title="Подать записки">
+  <Header />
+  
+  <main class="pt-32 pb-20 px-4 max-w-6xl mx-auto min-h-screen relative z-10">
+    <div class="text-center mb-16 animate-[fadeIn_0.5s_ease-out]">
+      <h1 class="text-5xl md:text-6xl font-bold font-['Playfair_Display'] text-slate-900 mb-6 text-balance text-center">Подать записки</h1>
+      <div class="w-24 h-1 bg-amber-700 mx-auto rounded-full opacity-80 mb-6 shadow-inner"></div>
+      <p class="text-lg text-slate-600 max-w-2xl mx-auto">
+        Заполните списки имен ниже, чтобы отправить записки напрямую в храм на ближайшее богослужение.
+      </p>
+    </div>
+
+    <div class="bg-white/90 backdrop-blur-md rounded-[3rem] shadow-2xl border border-slate-100 p-8 md:p-12 relative overflow-hidden">
+      
+      <div class="absolute bottom-[-50px] right-[-50px] w-64 h-64 opacity-5 mix-blend-multiply rotate-[-15deg] pointer-events-none">
+        <img src="/images/sketch-1.jpg" alt="" class="w-full h-full object-contain">
+      </div>
+
+      <form id="notesForm" class="space-y-12 relative z-10">
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          
+          <div class="bg-amber-50/50 rounded-3xl p-6 md:p-8 border border-amber-100 shadow-sm flex flex-col h-full transition-transform hover:-translate-y-1 duration-300">
+            <div class="flex items-center gap-4 mb-4 border-b border-amber-200/50 pb-4">
+              <div class="w-12 h-12 text-amber-800 shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.2" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m-3-3h6" />
+                </svg>
+              </div>
+              <div>
+                <h2 class="text-3xl font-bold text-slate-900 font-['Playfair_Display']">О здравии</h2>
+              </div>
+            </div>
+            <p class="text-sm text-slate-500 mb-4 flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 shrink-0">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+              </svg>
+              Вписывайте имена строго в столбик, по одному на строку
+            </p>
+            <textarea 
+              id="zdravie_text"
+              rows="12" 
+              placeholder="Иван&#10;Мария&#10;Петр (болящ.)&#10;..." 
+              class="w-full flex-grow p-4 border-2 border-transparent rounded-2xl focus:border-amber-400 focus:bg-white focus:ring-0 outline-none transition-all resize-none font-medium text-lg leading-relaxed placeholder:text-slate-400 bg-white/60"
+            ></textarea>
+          </div>
+
+          <div class="bg-slate-50 rounded-3xl p-6 md:p-8 border border-slate-200 shadow-sm flex flex-col h-full transition-transform hover:-translate-y-1 duration-300">
+            <div class="flex items-center gap-4 mb-4 border-b border-slate-200 pb-4">
+              <div class="w-12 h-12 text-slate-600 shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.2" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 2.25c-1.25 2.5-3 4.5-3 7.25 0 2.5 1.5 4 3 4s3-1.5 3-4c0-2.75-1.75-4.75-3-7.25z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 14v7M9 21h6" />
+                </svg>
+              </div>
+              <div>
+                <h2 class="text-3xl font-bold text-slate-900 font-['Playfair_Display']">О упокоении</h2>
+              </div>
+            </div>
+            <p class="text-sm text-slate-500 mb-4 flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 shrink-0">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+              </svg>
+              Вписывайте имена строго в столбик, по одному на строку
+            </p>
+            <textarea 
+              id="upokoenie_text"
+              rows="12" 
+              placeholder="Николай&#10;Анна&#10;Сергей (новопрест.)&#10;..." 
+              class="w-full flex-grow p-4 border-2 border-transparent rounded-2xl focus:border-slate-400 focus:bg-white focus:ring-0 outline-none transition-all resize-none font-medium text-lg leading-relaxed placeholder:text-slate-400 bg-white/60"
+            ></textarea>
+          </div>
+
+        </div>
+
+        <div class="text-center pt-4">
+          <button type="submit" id="submitBtn" class="px-12 py-5 bg-amber-800 text-white rounded-full font-bold text-lg hover:bg-amber-900 transition-all duration-300 shadow-xl shadow-amber-800/20 active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed">
+            Отправить в храм
+          </button>
+          <p id="errorMessage" class="mt-4 text-sm font-bold text-red-600 hidden">❌ Произошла ошибка. Попробуйте позже.</p>
+        </div>
+
+      </form>
+    </div>
+  </main>
+
+  <div id="successModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
+    
+    <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
+    
+    <div class="relative bg-white rounded-[3rem] shadow-2xl border border-slate-100 p-8 md:p-14 max-w-lg w-full text-center animate-[fadeIn_0.3s_ease-out]">
+      
+      <div class="w-24 h-24 mx-auto text-amber-700 mb-6 bg-amber-50 rounded-full flex items-center justify-center border-4 border-amber-100">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-12 h-12">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      
+      <h3 class="text-3xl font-bold font-['Playfair_Display'] text-slate-900 mb-4">Записки переданы</h3>
+      <p class="text-slate-600 mb-10 text-lg leading-relaxed">
+        Ваши требы успешно отправлены в храм на ближайшее богослужение. Спаси вас Господи!
+      </p>
+      
+      <div class="flex flex-col gap-4">
+        <a href="/donate" class="w-full py-4 bg-amber-800 text-white rounded-xl font-bold text-lg hover:bg-amber-900 transition-all shadow-md active:scale-95">
+          Добровольное пожертвование
+        </a>
+        <button type="button" id="closeModalBtn" class="w-full py-4 bg-white border-2 border-amber-200 text-amber-900 rounded-xl font-bold text-lg hover:bg-amber-50 hover:border-amber-300 transition-all active:scale-95">
+          Подать ещё записки
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+</Layout>
+
+<script define:vars={{ botToken, zdravieChatId, upokoenieChatId }}>
+  // ↓↓↓↓↓ ВСТАВЬ ССЫЛКУ ОТ GOOGLE МЕЖДУ КОВЫЧЕК ↓↓↓↓↓
+  const GOOGLE_PROXY_URL = 'https://script.google.com/macros/s/AKfycbwejU7rRRl0HRYJQAR7s0UJIMcC8T3PlcvDwTh5ykpJ9uXX7m6L5dv98tewviJQlYrH/exec';
+  // ↑↑↑↑↑ ВСТАВЬ ССЫЛКУ ОТ GOOGLE МЕЖДУ КОВЫЧЕК ↑↑↑↑↑
+
+  const form = document.getElementById('notesForm');
+  const submitBtn = document.getElementById('submitBtn');
+  const errorMessage = document.getElementById('errorMessage');
+  const successModal = document.getElementById('successModal');
+  const closeModalBtn = document.getElementById('closeModalBtn');
+
+  closeModalBtn.addEventListener('click', () => {
+    successModal.classList.add('hidden');
+    successModal.classList.remove('flex');
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const zdravie = document.getElementById('zdravie_text').value.trim();
+    const upokoenie = document.getElementById('upokoenie_text').value.trim();
+
+    if (!zdravie && !upokoenie) {
+      alert('Пожалуйста, напишите имена хотя бы в одной записке.');
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.innerText = 'Отправка...';
+    errorMessage.classList.add('hidden');
+
+    try {
+      const promises = [];
+
+      if (zdravie) {
+        const msgZdravie = '🌿 *О ЗДРАВИИ:*\n\n' + zdravie;
+        promises.push(
+          fetch(GOOGLE_PROXY_URL, {
+            method: 'POST',
+            body: JSON.stringify({ botToken: botToken, chatId: zdravieChatId, text: msgZdravie })
+          })
+        );
+      }
+
+      if (upokoenie) {
+        const msgUpokoenie = '🕯 *О УПОКОЕНИИ:*\n\n' + upokoenie;
+        promises.push(
+          fetch(GOOGLE_PROXY_URL, {
+            method: 'POST',
+            body: JSON.stringify({ botToken: botToken, chatId: upokoenieChatId, text: msgUpokoenie })
+          })
+        );
+      }
+
+      const results = await Promise.all(promises);
+      const allSuccess = results.every(res => res.ok);
+
+      if (allSuccess) {
+        form.reset();
+        successModal.classList.remove('hidden');
+        successModal.classList.add('flex');
+      } else {
+        throw new Error('Google Proxy вернул ошибку');
+      }
+
+    } catch (error) {
+      console.error('Ошибка отправки:', error);
+      errorMessage.classList.remove('hidden');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.innerText = 'Отправить в храм';
+    }
+  });
+</script>

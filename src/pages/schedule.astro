@@ -1,0 +1,157 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+
+// Берем ID таблицы расписания из безопасного сейфа .env
+const sheetId = import.meta.env.GOOGLE_SHEET_SCHEDULE_ID;
+const url = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=tsv`;
+
+let groupedSchedule = [];
+
+// Умный парсер дат (превращает 19.03.2026 в "19 марта" и "Четверг")
+function parseDateRow(dateString) {
+  if (!dateString) return { dateStr: '', weekday: '' };
+  
+  // Проверяем, похожа ли строка на дату формата ДД.ММ.ГГГГ
+  const parts = dateString.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
+  if (parts) {
+    const [_, day, month, year] = parts;
+    const d = new Date(`${year}-${month}-${day}`);
+    
+    if (!isNaN(d)) {
+      const formatterDate = new Intl.DateTimeFormat('ru-RU', { day: 'numeric', month: 'long' });
+      const formatterDay = new Intl.DateTimeFormat('ru-RU', { weekday: 'long' });
+      
+      let weekday = formatterDay.format(d);
+      weekday = weekday.charAt(0).toUpperCase() + weekday.slice(1); // Делаем с большой буквы
+      
+      return { dateStr: formatterDate.format(d), weekday: weekday };
+    }
+  }
+  // Если это не дата (например, текст "Сплошная седмица"), возвращаем как есть
+  return { dateStr: dateString, weekday: '' };
+}
+
+// Умное определение цвета из таблицы (ловит любые окончания и пробелы)
+function getTextColor(marker) {
+  if (!marker) return 'text-slate-900'; // Если ячейка пустая — стандартный строгий цвет
+  
+  const m = marker.toLowerCase();
+  
+  // Ищем по части слова, чтобы исключить ошибки окончаний и пробелов
+  if (m.includes('красн')) return 'text-red-700';
+  if (m.includes('фиолет')) return 'text-purple-700';
+  if (m.includes('зелен') || m.includes('зелён')) return 'text-green-700';
+  if (m.includes('син') || m.includes('голуб')) return 'text-blue-700';
+  if (m.includes('желт') || m.includes('жёлт') || m.includes('золот')) return 'text-amber-600'; // Желтый/золотой
+  if (m.includes('черн') || m.includes('чёрн')) return 'text-slate-900';
+  
+  return 'text-slate-900'; // Запасной вариант, если цвет не распознан
+}
+
+try {
+  const response = await fetch(url);
+  const tsvText = await response.text();
+  const rows = tsvText.split('\n').slice(1);
+  
+  let currentDay = null;
+
+  rows.forEach(row => {
+    const columns = row.split('\t');
+    
+    const rawDate = columns[0]?.trim();
+    const holiday = columns[1]?.trim();
+    const time = columns[2]?.trim();
+    const service = columns[3]?.trim();
+    const colorMarker = columns[4]?.trim(); 
+
+    if (!rawDate && !time && !service) return; 
+
+    if (rawDate) {
+      const { dateStr, weekday } = parseDateRow(rawDate);
+      const textColor = getTextColor(colorMarker);
+
+      currentDay = {
+        dateStr: dateStr,
+        weekday: weekday,
+        holiday: holiday || '',
+        textColor: textColor, 
+        services: []
+      };
+      groupedSchedule.push(currentDay);
+    }
+
+    if ((time || service) && currentDay) {
+      currentDay.services.push({ 
+        time: time || '', 
+        service: service || '' 
+      });
+    }
+  });
+} catch (error) {
+  console.error('Ошибка при загрузке расписания:', error);
+}
+---
+
+<Layout title="Расписание">
+  <Header />
+  
+  <main class="pt-32 pb-20 px-4 max-w-6xl mx-auto min-h-screen relative z-10">
+    <div class="text-center mb-16 animate-[fadeIn_0.5s_ease-out]">
+      <h1 class="text-5xl md:text-6xl font-bold font-['Playfair_Display'] text-slate-900 mb-6 text-balance text-center">Расписание богослужений</h1>
+      <div class="w-24 h-1 bg-amber-700 mx-auto rounded-full opacity-80 mb-6 shadow-inner"></div>
+    </div>
+
+    <div class="space-y-6 relative z-10">
+      {groupedSchedule.length === 0 ? (
+        <div class="text-center p-10 bg-white/90 backdrop-blur-md rounded-3xl shadow-xl border border-slate-100">
+          <p class="text-slate-500 text-lg font-medium">Расписание загружается или пока не добавлено...</p>
+        </div>
+      ) : (
+        <div class="flex flex-col gap-4">
+          {groupedSchedule.map((day) => (
+            // Карточка-строка в стиле классической таблицы
+            <div class={`bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden flex flex-col md:flex-row transition-shadow hover:shadow-lg`}>
+              
+              {/* КОЛОНКА 1: ДАТА И ДЕНЬ НЕДЕЛИ */}
+              <div class={`md:w-1/5 p-4 md:p-6 border-b md:border-b-0 md:border-r border-slate-100 flex flex-col justify-center items-center text-center ${day.textColor}`}>
+                <span class="text-2xl font-bold" set:html={day.dateStr.replace(/\n/g, '<br>')} />
+                {day.weekday && (
+                  <span class="text-sm uppercase tracking-widest font-semibold mt-1 opacity-90">{day.weekday}</span>
+                )}
+              </div>
+              
+              {/* КОЛОНКА 2: ПРАЗДНИК (ЦЕНТР) */}
+              <div class={`md:w-2/5 p-4 md:p-6 border-b md:border-b-0 md:border-r border-slate-100 flex flex-col justify-center items-center text-center ${day.textColor}`}>
+                {day.holiday ? (
+                  <span class="text-xl md:text-2xl font-bold font-['Playfair_Display'] leading-snug" set:html={day.holiday.replace(/\n/g, '<br>')} />
+                ) : (
+                  <span class="opacity-0">-</span> // Пустышка для сохранения высоты
+                )}
+              </div>
+              
+              {/* КОЛОНКА 3: БОГОСЛУЖЕНИЯ (ВРЕМЯ И СЛУЖБА) */}
+              <div class="md:w-2/5 flex flex-col">
+                {day.services.map((s, index) => (
+                  <div class={`flex flex-col sm:flex-row p-4 md:p-6 ${index !== day.services.length - 1 ? 'border-b border-slate-100' : ''}`}>
+                    {s.time && (
+                      <div class={`w-24 font-bold text-lg shrink-0 ${day.textColor}`}>
+                        {s.time}
+                      </div>
+                    )}
+                    {s.service && (
+                      <div class={`text-lg font-medium leading-relaxed ${day.textColor}`}>
+                        <span set:html={s.service.replace(/\n/g, '<br>')} />
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+              
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  </main>
+</Layout>
