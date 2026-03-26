@@ -2,91 +2,92 @@
 // src/components/Header.astro
 ---
 <header class="fixed w-full top-0 z-50 bg-white/98 backdrop-blur-lg border-b border-slate-100 shadow-sm transition-all duration-300 group">
-	<div class="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-10 h-16 sm:h-20 xl:h-24 flex justify-between items-center relative">
-	  
-	  <a href="/" class="flex items-center gap-3 sm:gap-4 shrink-0 group overflow-hidden mr-4">
-		<div class="w-10 h-10 sm:w-12 sm:h-12 shrink-0 bg-amber-800 rounded-full flex items-center justify-center text-white transition-all duration-300 shadow-xl shadow-amber-800/10 group-hover:shadow-amber-700/50 group-hover:bg-amber-900 active:scale-95 p-2.5">
-		  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-full h-full transition-opacity duration-300 group-hover:opacity-100 opacity-90">
-			<path stroke-linecap="round" stroke-linejoin="round" d="M12 2v20 M9 7h6 M5 11h14 M9 16l6 2" />
-		  </svg>
-		</div>
-		<div class="flex flex-col group-hover:text-amber-800 transition-colors min-w-0">
-		  <span class="font-bold text-slate-950 font-['Playfair_Display'] text-lg sm:text-xl xl:text-2xl leading-tight truncate">
-			Храм Архангела Михаила
-		  </span>
-		  <span class="text-xs sm:text-sm text-slate-500 font-medium hidden sm:block">мкр. Заветы Ильича</span>
-		</div>
-	  </a>
+    <div class="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-10 h-16 sm:h-20 xl:h-24 flex justify-between items-center relative">
+      
+      <a href="/" class="flex items-center gap-3 sm:gap-4 shrink-0 group overflow-hidden mr-4">
+        {/* === НАШ НОВЫЙ ЛОГОТИП-КАРТИНКА === */}
+        <div class="w-10 h-10 sm:w-12 sm:h-12 shrink-0 rounded-full flex items-center justify-center transition-all duration-300 shadow-xl shadow-amber-800/10 group-hover:shadow-amber-700/50 active:scale-95 overflow-hidden">
+          <img src="/images/favicon.jpg" alt="Логотип Храма" class="w-full h-full object-cover rounded-full transition-opacity duration-300 group-hover:opacity-90">
+        </div>
+        {/* ================================== */}
+        
+        <div class="flex flex-col group-hover:text-amber-800 transition-colors min-w-0">
+          <span class="font-bold text-slate-950 font-['Playfair_Display'] text-lg sm:text-xl xl:text-2xl leading-tight truncate">
+            Храм Архангела Михаила
+          </span>
+          <span class="text-xs sm:text-sm text-slate-500 font-medium hidden sm:block">мкр. Заветы Ильича</span>
+        </div>
+      </a>
   
-	  <nav class="hidden lg:flex items-center gap-4 xl:gap-8 font-medium text-base h-full">
-		{[
-		  ['О храме', '/about'],
-		  ['Расписание', '/schedule'],
-		  ['Духовенство', '/clergy'],
-		  ['Календарь', '/calendar'],
-		  ['Контакты', '/contacts']
-		].map(([title, url]) => (
-		  <a href={url} class="relative text-slate-700 whitespace-nowrap px-3 py-2 transition-colors duration-300 group hover:text-amber-900">
-			{title}
-			<span class="absolute bottom-0 left-3 w-[calc(100%-1.5rem)] h-0.5 bg-amber-700 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></span>
-		  </a>
-		))}
-	  </nav>
+      <nav class="hidden lg:flex items-center gap-4 xl:gap-8 font-medium text-base h-full">
+        {[
+          ['О храме', '/about'],
+          ['Расписание', '/schedule'],
+          ['Духовенство', '/clergy'],
+          ['Календарь', '/calendar'],
+          ['Контакты', '/contacts']
+        ].map(([title, url]) => (
+          <a href={url} class="relative text-slate-700 whitespace-nowrap px-3 py-2 transition-colors duration-300 group hover:text-amber-900">
+            {title}
+            <span class="absolute bottom-0 left-3 w-[calc(100%-1.5rem)] h-0.5 bg-amber-700 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></span>
+          </a>
+        ))}
+      </nav>
   
-	  <div class="flex items-center gap-3 sm:gap-4 h-full shrink-0">
-		<a href="/donate" class="hidden xl:block px-7 py-3 border-2 border-amber-200 text-amber-950 rounded-full font-bold text-base whitespace-nowrap hover:bg-amber-50 hover:border-amber-400 transition-all duration-300 active:scale-95 shadow-sm hover:shadow-md">
-		  Пожертвовать
-		</a>
-		<a href="/notes" class="hidden md:block px-7 py-3 bg-amber-800 text-white rounded-full font-bold text-base whitespace-nowrap hover:bg-amber-900 transition-all duration-300 active:scale-95 shadow-lg shadow-amber-800/20 hover:shadow-amber-800/30">
-		  Подать записки
-		</a>
-		
-		<button id="mobile-menu-button" class="lg:hidden p-2 sm:p-3 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors active:scale-90 shrink-0" aria-label="Открыть меню">
-		  <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-7 sm:h-7 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-			  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-		  </svg>
-		</button>
-	  </div>
-	</div>
-	
-	<div id="mobile-menu-panel" class="absolute top-16 sm:top-20 xl:top-24 left-0 w-full bg-white/98 border-b border-slate-100 shadow-2xl transition-all duration-500 transform translate-y-[-150%] opacity-0 lg:hidden max-h-[85vh] overflow-y-auto">
-	  <nav class="p-6 sm:p-8 flex flex-col gap-4 font-medium text-lg">
-		  {[
-			  ['Главная', '/'],
-			  ['О храме', '/about'],
-			  ['Расписание', '/schedule'],
-			  ['Духовенство', '/clergy'],
-			  ['Календарь', '/calendar'],
-			  ['Новости', '/news'],
-			  ['Контакты', '/contacts']
-		  ].map(([title, url]) => (
-			  <a href={url} class="text-slate-800 p-3 bg-slate-50 hover:bg-amber-50 hover:text-amber-900 rounded-xl transition-colors text-center">
-				  {title}
-			  </a>
-		  ))}
-		  <div class="flex flex-col gap-3 mt-2 pt-4 border-t border-slate-100">
-			  <a href="/notes" class="w-full text-center px-6 py-4 bg-amber-800 text-white rounded-xl font-bold text-base transition-all duration-300 shadow-md">
-				Подать записки
-			  </a>
-			  <a href="/donate" class="w-full text-center px-6 py-4 border-2 border-amber-200 text-amber-950 rounded-xl font-bold text-base transition-all duration-300">
-				Пожертвовать
-			  </a>
-		  </div>
-	  </nav>
-	</div>
+      <div class="flex items-center gap-3 sm:gap-4 h-full shrink-0">
+        <a href="/donate" class="hidden xl:block px-7 py-3 border-2 border-amber-200 text-amber-950 rounded-full font-bold text-base whitespace-nowrap hover:bg-amber-50 hover:border-amber-400 transition-all duration-300 active:scale-95 shadow-sm hover:shadow-md">
+          Пожертвовать
+        </a>
+        <a href="/notes" class="hidden md:block px-7 py-3 bg-amber-800 text-white rounded-full font-bold text-base whitespace-nowrap hover:bg-amber-900 transition-all duration-300 active:scale-95 shadow-lg shadow-amber-800/20 hover:shadow-amber-800/30">
+          Подать записки
+        </a>
+        
+        <button id="mobile-menu-button" class="lg:hidden p-2 sm:p-3 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors active:scale-90 shrink-0" aria-label="Открыть меню">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-7 sm:h-7 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+    </div>
+    
+    <div id="mobile-menu-panel" class="absolute top-16 sm:top-20 xl:top-24 left-0 w-full bg-white/98 border-b border-slate-100 shadow-2xl transition-all duration-500 transform translate-y-[-150%] opacity-0 lg:hidden max-h-[85vh] overflow-y-auto">
+      <nav class="p-6 sm:p-8 flex flex-col gap-4 font-medium text-lg">
+          {[
+              ['Главная', '/'],
+              ['О храме', '/about'],
+              ['Расписание', '/schedule'],
+              ['Духовенство', '/clergy'],
+              ['Календарь', '/calendar'],
+              ['Новости', '/news'],
+              ['Контакты', '/contacts']
+          ].map(([title, url]) => (
+              <a href={url} class="text-slate-800 p-3 bg-slate-50 hover:bg-amber-50 hover:text-amber-900 rounded-xl transition-colors text-center">
+                  {title}
+              </a>
+          ))}
+          <div class="flex flex-col gap-3 mt-2 pt-4 border-t border-slate-100">
+              <a href="/notes" class="w-full text-center px-6 py-4 bg-amber-800 text-white rounded-xl font-bold text-base transition-all duration-300 shadow-md">
+                Подать записки
+              </a>
+              <a href="/donate" class="w-full text-center px-6 py-4 border-2 border-amber-200 text-amber-950 rounded-xl font-bold text-base transition-all duration-300">
+                Пожертвовать
+              </a>
+          </div>
+      </nav>
+    </div>
   </header>
   
   <script>
-	  const button = document.getElementById('mobile-menu-button');
-	  const panel = document.getElementById('mobile-menu-panel');
+      const button = document.getElementById('mobile-menu-button');
+      const panel = document.getElementById('mobile-menu-panel');
   
-	  button?.addEventListener('click', () => {
-		  if (panel?.classList.contains('translate-y-[-150%]')) {
-			  panel.classList.remove('translate-y-[-150%]', 'opacity-0');
-			  panel.classList.add('translate-y-0', 'opacity-100');
-		  } else {
-			  panel?.classList.add('translate-y-[-150%]', 'opacity-0');
-			  panel?.classList.remove('translate-y-0', 'opacity-100');
-		  }
-	  });
+      button?.addEventListener('click', () => {
+          if (panel?.classList.contains('translate-y-[-150%]')) {
+              panel.classList.remove('translate-y-[-150%]', 'opacity-0');
+              panel.classList.add('translate-y-0', 'opacity-100');
+          } else {
+              panel?.classList.add('translate-y-[-150%]', 'opacity-0');
+              panel?.classList.remove('translate-y-0', 'opacity-100');
+          }
+      });
   </script>
