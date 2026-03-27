@@ -18,13 +18,15 @@ try {
   const rows = data.table.rows;
   
   aboutBlocks = rows.map((row) => {
-    const c = row.c;
+    // ВАЖНО: ЗАЩИТА ОТ ПУСТЫХ СТРОК (ИЗ-ЗА КОТОРЫХ БЫЛ БАГ)
+    const c = row.c || []; 
+    
     return {
       title: c[0]?.v || '',
       text: c[1]?.v || '',
       image: c[2]?.v || null // Картинка не обязательна
     };
-  }).filter(item => item.title && !item.title.includes('Заголовок')); // Игнорируем шапку
+  }).filter(item => item.title && !item.title.includes('Заголовок')); // Игнорируем шапку и пустые строки
   
 } catch (error) {
   console.error('Ошибка при загрузке данных О храме:', error);
