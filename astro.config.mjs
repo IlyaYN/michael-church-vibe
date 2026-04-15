@@ -4,6 +4,10 @@ import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
   site: 'https://arhangelpushkino.ru',
+  // Разрешаем Astro работать на нашем домене
+  server: {
+    allowedHosts: true
+  },
   build: {
     // Эта команда — наше крайнее средство. Она заставляет Astro ВСЕГДА встраивать CSS внутрь HTML.
     inlineStylesheets: 'always', 
