@@ -116,15 +116,15 @@ import Header from '../components/Header.astro';
 </Layout>
 
 <script>
-  // ↓↓↓↓↓ ВСТАВЬ СЮДА НОВУЮ ССЫЛКУ ИЗ GOOGLE APPS SCRIPT ↓↓↓↓↓
+  // ↓↓↓↓↓ Твоя ссылка на Google Apps Script (осталась без изменений) ↓↓↓↓↓
   const GOOGLE_PROXY_URL = 'https://script.google.com/macros/s/AKfycbzQdesfHfUeZWe_xcDA7XZgqcUZpd3cO-MwcrFMrQcipjRHOgBb2FLr5Vtdh0tXeg_4/exec';
-  // ↑↑↑↑↑ ВСТАВЬ СЮДА НОВУЮ ССЫЛКУ ИЗ GOOGLE APPS SCRIPT ↑↑↑↑↑
 
-  const form = document.getElementById('notesForm');
-  const submitBtn = document.getElementById('submitBtn');
-  const errorMessage = document.getElementById('errorMessage');
-  const successModal = document.getElementById('successModal');
-  const closeModalBtn = document.getElementById('closeModalBtn');
+  // Строго указываем типы элементов, чтобы редактор не ругался
+  const form = document.getElementById('notesForm') as HTMLFormElement;
+  const submitBtn = document.getElementById('submitBtn') as HTMLButtonElement;
+  const errorMessage = document.getElementById('errorMessage') as HTMLElement;
+  const successModal = document.getElementById('successModal') as HTMLElement;
+  const closeModalBtn = document.getElementById('closeModalBtn') as HTMLButtonElement;
 
   closeModalBtn.addEventListener('click', () => {
     successModal.classList.add('hidden');
@@ -134,8 +134,9 @@ import Header from '../components/Header.astro';
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     
-    const zdravie = document.getElementById('zdravie_text').value.trim();
-    const upokoenie = document.getElementById('upokoenie_text').value.trim();
+    // Тут тоже строго указываем, что это текстовое поле
+    const zdravie = (document.getElementById('zdravie_text') as HTMLTextAreaElement).value.trim();
+    const upokoenie = (document.getElementById('upokoenie_text') as HTMLTextAreaElement).value.trim();
 
     if (!zdravie && !upokoenie) {
       alert('Пожалуйста, напишите имена хотя бы в одной записке.');

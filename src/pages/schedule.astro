@@ -2,51 +2,54 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 
+// 1. Описываем структуру для TypeScript, чтобы он перестал паниковать
+type Service = { time: string; service: string; };
+type ScheduleDay = { dateStr: string; weekday: string; holiday: string; textColor: string; services: Service[]; };
+
 // Берем ID таблицы расписания из безопасного сейфа .env
 const sheetId = import.meta.env.GOOGLE_SHEET_SCHEDULE_ID;
 const url = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=tsv`;
 
-let groupedSchedule = [];
+// 2. Явно говорим, что массив будет состоять из расписания, а не пустоты
+let groupedSchedule: ScheduleDay[] = [];
 
-// Умный парсер дат (превращает 19.03.2026 в "19 марта" и "Четверг")
-function parseDateRow(dateString) {
+// Умный парсер дат
+function parseDateRow(dateString: string) {
   if (!dateString) return { dateStr: '', weekday: '' };
   
-  // Проверяем, похожа ли строка на дату формата ДД.ММ.ГГГГ
   const parts = dateString.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
   if (parts) {
     const [_, day, month, year] = parts;
     const d = new Date(`${year}-${month}-${day}`);
     
-    if (!isNaN(d)) {
+    if (!isNaN(d.getTime())) {
       const formatterDate = new Intl.DateTimeFormat('ru-RU', { day: 'numeric', month: 'long' });
       const formatterDay = new Intl.DateTimeFormat('ru-RU', { weekday: 'long' });
       
-      let weekday = formatterDay.format(d);
-      weekday = weekday.charAt(0).toUpperCase() + weekday.slice(1); // Делаем с большой буквы
+      // Используем d.getTime(), чтобы TypeScript точно принял значение
+      let weekday = formatterDay.format(d.getTime());
+      weekday = weekday.charAt(0).toUpperCase() + weekday.slice(1);
       
-      return { dateStr: formatterDate.format(d), weekday: weekday };
+      return { dateStr: formatterDate.format(d.getTime()), weekday: weekday };
     }
   }
-  // Если это не дата (например, текст "Сплошная седмица"), возвращаем как есть
   return { dateStr: dateString, weekday: '' };
 }
 
-// Умное определение цвета из таблицы (ловит любые окончания и пробелы)
-function getTextColor(marker) {
-  if (!marker) return 'text-slate-900'; // Если ячейка пустая — стандартный строгий цвет
+// Умное определение цвета из таблицы
+function getTextColor(marker: string) {
+  if (!marker) return 'text-slate-900'; 
   
   const m = marker.toLowerCase();
   
-  // Ищем по части слова, чтобы исключить ошибки окончаний и пробелов
   if (m.includes('красн')) return 'text-red-700';
   if (m.includes('фиолет')) return 'text-purple-700';
   if (m.includes('зелен') || m.includes('зелён')) return 'text-green-700';
   if (m.includes('син') || m.includes('голуб')) return 'text-blue-700';
-  if (m.includes('желт') || m.includes('жёлт') || m.includes('золот')) return 'text-amber-600'; // Желтый/золотой
+  if (m.includes('желт') || m.includes('жёлт') || m.includes('золот')) return 'text-amber-600'; 
   if (m.includes('черн') || m.includes('чёрн')) return 'text-slate-900';
   
-  return 'text-slate-900'; // Запасной вариант, если цвет не распознан
+  return 'text-slate-900'; 
 }
 
 try {
@@ -54,9 +57,9 @@ try {
   const tsvText = await response.text();
   const rows = tsvText.split('\n').slice(1);
   
-  let currentDay = null;
+  let currentDay: ScheduleDay | null = null;
 
-  rows.forEach(row => {
+  rows.forEach((row: string) => {
     const columns = row.split('\t');
     
     const rawDate = columns[0]?.trim();
@@ -110,7 +113,6 @@ try {
       ) : (
         <div class="flex flex-col gap-4">
           {groupedSchedule.map((day) => (
-            // Карточка-строка в стиле классической таблицы
             <div class={`bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden flex flex-col md:flex-row transition-shadow hover:shadow-lg`}>
               
               {/* КОЛОНКА 1: ДАТА И ДЕНЬ НЕДЕЛИ */}
@@ -126,7 +128,7 @@ try {
                 {day.holiday ? (
                   <span class="text-xl md:text-2xl font-bold font-['Playfair_Display'] leading-snug" set:html={day.holiday.replace(/\n/g, '<br>')} />
                 ) : (
-                  <span class="opacity-0">-</span> // Пустышка для сохранения высоты
+                  <span class="opacity-0">-</span> 
                 )}
               </div>
               
